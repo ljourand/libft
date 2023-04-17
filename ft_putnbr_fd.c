@@ -23,15 +23,10 @@ void	ft_putnbr_fd(int n, int fd)
 		nb = -nb;
 		write(fd, "-", 1);
 	}
+	digit = nb % 10 + '0';
 	if (nb >= 10)
 	{
-		digit = nb % 10 + '0';
 		ft_putnbr_fd(nb / 10, fd);
-		write(fd, &digit, 1);
 	}
-	else
-	{
-		digit = nb % 10 + '0';
-		write(fd, &digit, 1);
-	}
+	write(fd, &digit, 1);
 }

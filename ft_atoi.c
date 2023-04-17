@@ -12,27 +12,49 @@
 
 #include "libft.h"
 
+static int	ft_isspace(const char c)
+{
+	if (c == ' ' || (c >= 9 && c <= 13))
+	{
+		return (TRUE);
+	}
+	return (FALSE);
+}
+
+static void	skip_white_spaces(const char **str)
+{
+	while (ft_isspace(**str) && **str)
+	{
+		*str += 1;
+	}
+}
+
+static int	get_and_skip_sign(const char **str)
+{
+	int	sign;
+
+	sign = (**str == '-') * -1 + (**str != '-') * 1;
+	if (**str == '-' || **str == '+')
+		*str += 1;
+	return (sign);
+}
+
 int	ft_atoi(const char *str)
 {
-	int					i;
-	int					signe;
-	unsigned long long	result;
+	int		sign;
+	long	result;
 
-	i = 0;
+	skip_white_spaces(&str);
+	sign = get_and_skip_sign(&str);
 	result = 0;
-	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
-		i++;
-	signe = (str[i] == '-') * -1 + (str[i] != '-') * 1;
-	if (str[i] == '-' || str[i] == '+')
-		i++;
-	while (str[i] >= '0' && str[i] <= '9')
+	while (ft_isdigit(*str))
 	{
-		result = result * 10 + str[i] - '0';
-		if (signe == 1 && result > __LONG_MAX__)
+		result = result * 10 + *str - '0';
+		if (result < 0 && sign == 1)
 			return (-1);
-		if (result > (unsigned long)__LONG_MAX__ + 1)
+		if (result < 0 && sign == -1)
 			return (0);
-		i++;
+		str++;
 	}
-	return ((int)(result * signe));
+	return (result * sign);
 }

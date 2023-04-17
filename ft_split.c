@@ -13,87 +13,75 @@
 #include "libft.h"
 #include <stdio.h>
 
-static int	ft_get_nb_words(char const *str, char c)
+size_t	count_words(const char *str, char c)
 {
-	int		count;
+	size_t	count;
 
-	while (str[0] && str[0] == c)
-		str++;
-	if (!str[0])
-		return (0);
-	str = ft_strchr(str, c);
-	while (str && str[0] == c && str[0])
-		str++;
-	count = 1;
-	while (str && str[0])
+	count = 0;
+	while (*str)
 	{
-		str = ft_strchr(str, c);
-		while (str && str[0] == c)
-			str++;
-		count++;
+		if (str[0] != c && (str[1] == c || str[1] == '\0'))
+		{
+			count++;
+		}
+		str++;
 	}
 	return (count);
 }
 
-static int	free_tab(char **tab, char const *str, char c)
+char	*get_and_skip_word(const char **str, char c)
+{
+	size_t	length;
+
+	while (**str && **str == c)
+	{
+		*str += 1;
+	}
+	length = 0;
+	while ((*str)[length] && (*str)[length] != c)
+	{
+		length++;
+	}
+	*str += length;
+	return (ft_substr(*str - length, 0, length));
+}
+
+static void	free_split(char **tab)
 {
 	int	i;
-	int	size;
 
-	size = ft_get_nb_words(str, c);
 	i = 0;
-	while (i < size)
+	while (tab[i])
 	{
-		if (tab[i])
-			free(tab[i]);
+		free(tab[i]);
 		i++;
 	}
 	free(tab);
-	return (0);
-}
-
-static char	*ft_get_word(char const *str, char c)
-{
-	int		i;
-	char	*word;
-
-	i = 0;
-	while (str[i] && str[i] == c)
-		str++;
-	while (str[i] && str[i] != c)
-		i++;
-	word = malloc(i + 1);
-	if (!word)
-		return (0);
-	word[i] = 0;
-	ft_memcpy(word, str, i);
-	return (word);
 }
 
 char	**ft_split(const char *str, char c)
 {
-	int		word_count;
-	char	**output;
-	int		i;
+	size_t	nb_words;
+	size_t	i;
+	char	**split;
 
-	if (!str || !str[0])
-		return (ft_calloc(1, sizeof (char *)));
-	word_count = ft_get_nb_words(str, c);
-	output = ft_calloc(word_count + 1, sizeof (char *));
-	if (!output)
-		return (0);
-	i = -1;
-	while (++i < word_count)
+	nb_words = count_words(str, c);
+	split = malloc((nb_words + 1) * sizeof (char *));
+	if (!split)
 	{
-		output[i] = ft_get_word(str, c);
-		if (!output[i])
-		{
-			free_tab(output, str, c);
-			return (0);
-		}
-		while (str[0] && str[0] == c)
-			str++;
-		str += ft_strlen(output[i]);
+		return (NULL);
 	}
-	return (output);
+	split[nb_words] = NULL;
+	i = 0;
+	while (i < nb_words)
+	{
+		split[i] = get_and_skip_word(&str, c);
+		if (!split[i])
+		{
+			free_split(split);
+			return (NULL);
+		}
+		i++;
+	}
+	return (split);
 }

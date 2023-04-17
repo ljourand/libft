@@ -13,6 +13,9 @@
 #ifndef LIBFT_H
 # define LIBFT_H
 
+# define TRUE 1
+# define FALSE 0
+
 # include <stdlib.h>
 # include <unistd.h>
 

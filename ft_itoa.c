@@ -12,23 +12,27 @@
 
 #include "libft.h"
 
+static int	ft_abs(int x)
+{
+	if (x < 0)
+	{
+		return (-x);
+	}
+	return (x);
+}
+
 static int	ft_get_nb_digits(int n)
 {
-	long	nb;
-	int		count;
+	size_t	count;
 
-	nb = n;
 	count = 0;
-	if (n == 0)
-		return (1);
-	if (n < 0)
+	if (n <= 0)
 	{
-		nb = -nb;
 		count++;
 	}
-	while (nb > 0)
+	while (n != 0)
 	{
-		nb = nb / 10;
+		n /= 10;
 		count++;
 	}
 	return (count);
@@ -36,27 +40,26 @@ static int	ft_get_nb_digits(int n)
 
 char	*ft_itoa(int n)
 {
-	char	*output;
-	long	nb;
+	char	*str;
 	int		length;
 
 	length = ft_get_nb_digits(n);
-	output = ft_calloc(length + 1, sizeof (char));
-	if (!output)
-		return (0);
-	if (n == 0)
-		output[0] = '0';
-	nb = n;
-	if (n < 0)
+	str = malloc(length + 1);
+	if (!str)
 	{
-		nb = -nb;
-		output[0] = '-';
+		return (NULL);
 	}
-	while (nb > 0)
+	str[length] = '\0';
+	while (length > 0)
 	{
 		length--;
-		output[length] = nb % 10 + '0';
-		nb = nb / 10;
+		str[length] = ft_abs(n % 10) + '0';
+		n /= 10;
+		if (n == 0 && length != 0)
+		{
+			str[0] = '-';
+			break ;
+		}
 	}
-	return (output);
+	return (str);
 }
