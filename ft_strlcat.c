@@ -28,5 +28,5 @@ size_t	ft_strlcat(char *dest, const char *src, size_t size)
 		j++;
 	}
 	dest[i] = '\0';
-	return (i + ft_strlen(&src[j]));
+	return (i + ft_strlen(src + j));
 }
